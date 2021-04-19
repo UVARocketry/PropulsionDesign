@@ -1,0 +1,64 @@
+dimensions:
+  chamber_area: 0.005474904291266996
+  chamber_length: 0.12259907140979574
+  chamber_radius: 0.04174585203131378
+  chamber_volume: 0.0008896719473308869
+  contraction_ratio: 8.0
+  converging_angle: 45
+  converging_length: 0.02698646450243769
+  diverging_angle: 20
+  diverging_length: 0.045359250952988144
+  exit_area: 0.003071654985690682
+  exit_radius: 0.03126880472437465
+  expansion_ratio: 4.4883414536984985
+  throat_area: 0.0006843630364083745
+  throat_radius: 0.014759387528876091
+  wall_thickness: 0.0025472045307242306
+engine:
+  ambient_pressure: 1.01325
+  cea_exhaust_velocity: 2631.8
+  cea_isp: 268.27726809378186
+  chamber_pressure: 30
+  chamber_temp: 3206.55
+  exhaust_gamma: 1.2455
+  exhaust_molar_mass: 20.277
+  exhaust_velocity: 2549.396261851326
+  fuel_mass_flow: 0.41289445454154944
+  mass_flow: 1.176749195443416
+  material_yield_strength: 1475000000.0
+  ox_mass_flow: 0.7638547409018664
+  specific_impulse: 259.87729478606786
+  thrust: 3000
+  wall_safety_factor: 30
+injector:
+  fuel_pressure_drop: 5
+  fuel_volume_flow: 0.0005097462401747524
+  num_ox_injectors: 8
+  ox_discharge_coeff: 0.7
+  ox_injector_area: 0.0001591394185932298
+  ox_injector_radius: 0.002516337870292998
+  ox_pressure_drop: 5
+  ox_volume_flow: 0.01624579002408516
+plumbing:
+  fuel_diam: 0.375
+  fuel_length: 1
+  fuel_pressure_drop: 0.8667876011102392
+  ox_diam: 0.625
+  ox_length: 1
+  ox_pressure_drop: 3.262171929616832
+  roughness: 0.0001
+propellants:
+  cea_cstar: 1793.2
+  characteristic_length: 1.3
+  equilibrium: true
+  fuel_chem_mass_percs:
+  - 100
+  fuel_chems:
+  - JP-5
+  fuel_density: 810
+  fuel_initial_temp: 293.15
+  fuel_viscosity: 0.00126
+  of_ratio: 1.85
+  ox_chem: O2
+  ox_density: 47.018626965473224
+  ox_initial_temp: 293.15

@@ -1,0 +1,10 @@
+problem
+rocket
+equilibrium
+p,bar=30.000
+pip=29.608
+o/f=1.85
+react
+fuel=JP-5 wt=100 t,K=293.150
+ox=O2 wt 100 t,K 293.150
+end
