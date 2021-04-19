@@ -34,6 +34,17 @@ def pressure_drop(length, mdot, diameter, roughness, rho, viscosity):
     return dP / 1e5  # to bar
 
 
+def velocity(mdot, diameter, rho):
+    '''returns velocity of flow in circular pipe [m/s] given:
+    mdot [kg/s]
+    diameter [m]
+    rho [kg/m3]'''
+    Vdot = mdot / rho
+    area = math.pi * diameter ** 2 / 4
+    vel = Vdot / area
+    return vel
+
+
 def calculate(data: dict):
     fuel_rho = data['propellants']['fuel_density']
     fuel_visc = data['propellants']['fuel_viscosity']
@@ -42,6 +53,8 @@ def calculate(data: dict):
     dp_fuel = pressure_drop(data['plumbing']['fuel_length'], data['engine']['fuel_mass_flow'],
                             data['plumbing']['fuel_diam']*2.54e-2, roughness, fuel_rho, fuel_visc)
     data['plumbing']['fuel_pressure_drop'] = dp_fuel
+    data['plumbing']['fuel_flow_vel'] = velocity(
+        data['engine']['fuel_mass_flow'], data['plumbing']['fuel_diam']*2.54e-2, fuel_rho)
 
     ox_temp = data['propellants']['ox_initial_temp']
     ox_press = (data['engine']['chamber_pressure'] +
@@ -50,4 +63,6 @@ def calculate(data: dict):
     ox_rho = cp.PropsSI('D', 'T', ox_temp, 'P', ox_press, fl)
     ox_visc = cp.PropsSI('V', 'T', ox_temp, 'P', ox_press, fl)
     data['plumbing']['ox_pressure_drop'] = pressure_drop(data['plumbing']['ox_length'], data['engine']['ox_mass_flow'],
-                                                         data['plumbing']['ox_diam']*2.54e-2, roughness, ox_rho, ox_visc)
+                                                         data['plumbing']['ox_diam'] * 2.54e-2, roughness, ox_rho, ox_visc)
+    data['plumbing']['ox_flow_vel'] = velocity(
+        data['engine']['ox_mass_flow'], data['plumbing']['ox_diam']*2.54e-2, ox_rho)

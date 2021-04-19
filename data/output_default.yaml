@@ -40,12 +40,14 @@ injector:
   ox_pressure_drop: 5
   ox_volume_flow: 0.01624579002408516
 plumbing:
-  fuel_diam: 0.375
+  fuel_diam: 0.25
+  fuel_flow_vel: 16.09595314701625
   fuel_length: 1
-  fuel_pressure_drop: 0.8667876011102392
-  ox_diam: 0.625
+  fuel_pressure_drop: 7.471350150206196
+  ox_diam: 0.5
+  ox_flow_vel: 128.24590671541472
   ox_length: 1
-  ox_pressure_drop: 3.262171929616832
+  ox_pressure_drop: 10.687603489611593
   roughness: 0.0001
 propellants:
   cea_cstar: 1793.2

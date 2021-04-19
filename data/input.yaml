@@ -13,9 +13,9 @@ injector:
   ox_pressure_drop: 5 #[bar]
 
 plumbing:
-  fuel_diam: 0.375 #[inch]
+  fuel_diam: 0.25 #[inch]
   fuel_length: 1 #[m] length of pipe run
-  ox_diam: 0.625 #[inch]
+  ox_diam: 0.5 #[inch]
   ox_length: 1 #[m]
   roughness: 0.1e-03 #[m] for rough stainless tubing (ours should be smoother)
 
