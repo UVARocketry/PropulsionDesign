@@ -45,7 +45,24 @@ def velocity(mdot, diameter, rho):
     return vel
 
 
+def valve_flow_coefficient(Vdot, P_in, P_out, T, molar_mass):
+    '''returns min. Cv for a valve
+    based on http://www.idealvalve.com/pdf/Flow-Calculation-for-Gases.pdf'''
+    # the "specific gravity" they ask for is really just the ratio of molar masses
+    specific_gravity = molar_mass / cp.PropsSI('M', 'air')
+    Vdot_cfh = Vdot * 127133
+    T_Rankine = T * 1.8
+    P_out_psi = P_out * 14.504
+    # standard cfh is the amount of volume flow if we let the flow expand to 1atm, 70F
+    Vdot_standard_cfh = Vdot_cfh * P_out / 1.013 * 295 / T
+    # this is the formula for choked valve flow in the pdf linked
+    Cv = Vdot_standard_cfh * \
+        math.sqrt(specific_gravity * T) / (816 * P_out_psi)
+    return Cv
+
+
 def calculate(data: dict):
+    # find pressure drop in fuel lines
     fuel_rho = data['propellants']['fuel_density']
     fuel_visc = data['propellants']['fuel_viscosity']
     roughness = data['plumbing']['roughness']
@@ -56,6 +73,7 @@ def calculate(data: dict):
     data['plumbing']['fuel_flow_vel'] = velocity(
         data['engine']['fuel_mass_flow'], data['plumbing']['fuel_diam']*2.54e-2, fuel_rho)
 
+    # pressure drop in ox lines
     ox_temp = data['propellants']['ox_initial_temp']
     ox_press = (data['engine']['chamber_pressure'] +
                 data['injector']['ox_pressure_drop'])*1e5  # bar to Pa
@@ -65,4 +83,9 @@ def calculate(data: dict):
     data['plumbing']['ox_pressure_drop'] = pressure_drop(data['plumbing']['ox_length'], data['engine']['ox_mass_flow'],
                                                          data['plumbing']['ox_diam'] * 2.54e-2, roughness, ox_rho, ox_visc)
     data['plumbing']['ox_flow_vel'] = velocity(
-        data['engine']['ox_mass_flow'], data['plumbing']['ox_diam']*2.54e-2, ox_rho)
+        data['engine']['ox_mass_flow'], data['plumbing']['ox_diam'] * 2.54e-2, ox_rho)
+
+    # ox valve flow coefficient
+    ox_molar_mass = cp.PropsSI('M', data['propellants']['ox_chem'])
+    data['plumbing']['ox_flow_coeff'] = valve_flow_coefficient(
+        data['injector']['fuel_volume_flow'], data['plumbing']['tank_press'], data['injector']['ox_pressure_drop'] + data['engine']['chamber_pressure'], data['propellants']['ox_initial_temp'], ox_molar_mass)

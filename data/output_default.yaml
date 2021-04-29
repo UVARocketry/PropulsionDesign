@@ -45,10 +45,12 @@ plumbing:
   fuel_length: 1
   fuel_pressure_drop: 0.8667876011102392
   ox_diam: 0.625
+  ox_flow_coeff: 20433916.62547999
   ox_flow_vel: 82.0773802978654
   ox_length: 1
   ox_pressure_drop: 3.262171929616832
   roughness: 0.0001
+  tank_press: 200
 propellants:
   cea_cstar: 1793.2
   characteristic_length: 1.3

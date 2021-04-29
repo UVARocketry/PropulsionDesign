@@ -17,6 +17,7 @@ plumbing:
   fuel_length: 1 #[m] length of pipe run
   ox_diam: 0.625 #[inch]
   ox_length: 1 #[m]
+  tank_press: 200 #[bar] this is the pressure of n2 and o2 cylinders
   roughness: 0.1e-03 #[m] for rough stainless tubing (ours should be smoother)
 
 
