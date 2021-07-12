@@ -11,46 +11,56 @@
 
 import subprocess
 import os
-import yaml
+import pathlib
 import numpy as np
+from dataclasses import dataclass
+
+CEA_PATH = pathlib.Path(__file__).parent / 'CEA'
+CEA_EXE = CEA_PATH / 'FCEA2m.exe'
+CEA_INP = CEA_PATH / 'ceadata.inp'
+CEA_OUT = CEA_PATH / 'ceadata.out'
 
 
-CEA_PATH = 'CEA'
-CEA_EXE = 'FCEA2m.exe'
-CEA_FILENAME = 'ceadata'
+@dataclass
+class CEAInputData:
+    pcham = None
+    pamb = None
+    of = None
+    fuel_chems = None
+    fuel_chem_mass_percs = None
+    fuel_initial_temp = None
+    ox_chem = None
+    ox_initial_temp = None
+    equilibrium = None
 
-PATH = os.path.dirname(__file__)
 
-
-def create_inp_file(data: dict) -> str:
-    '''creates a .inp file for CEA based on the design parameters in data. returns the full path to that file'''
-    path = os.path.join(PATH, CEA_PATH, CEA_FILENAME + '.inp')
-    with open(path, mode='w') as f:
+def create_inp_file(inp: CEAInputData):
+    '''creates a .inp file for CEA based on the design parameters in data.'''
+    with open(CEA_INP, mode='w') as f:
         f.write('problem\n')
         f.write('rocket\n')
 
-        equilibrium = 'equilibrium' if data['propellants']['equilibrium'] else 'frozen nfz=1'
+        eqbr_arg = 'equilibrium' if inp.equilibrium else 'frozen nfz=1'
         # equilibrium assumes rxns stay at equilibrium (inf. rxn rates) throughout nozzle flow
         # allowing rxns to absorb energy from flow. slightly underestimates engine performance
-        # frozen nfz=1 assumes all equilbria stop changing at the nozzle throat. This overestimates performance a bit.
-        f.write(f'{equilibrium}\n')
+        # frozen nfz=1 assumes all equilbria fix at the nozzle throat. overestimates performance
+        f.write(f'{eqbr_arg}\n')
 
         # parameters for problem
-        f.write(f"p,bar={data['engine']['chamber_pressure']:.3f}\n")
+        f.write(f"p,bar={inp.pcham:.3f}\n")
         f.write(
-            f"pip={data['engine']['chamber_pressure']/data['engine']['ambient_pressure']:.3f}\n")
-        f.write(f"o/f={data['propellants']['of_ratio']}\n")
+            f"pip={inp.pcham/inp.pamb:.3f}\n")
+        f.write(f"o/f={inp.of}\n")
 
         # specify reactants (fuel/ox)
         f.write('react\n')
-        for fuel_chem, fuel_chem_mass_perc in zip(data['propellants']['fuel_chems'], data['propellants']['fuel_chem_mass_percs']):
+        for fuel_chem, fuel_chem_mass_perc in zip(inp.fuel_chems, inp.fuel_chem_mass_percs):
             f.write(
-                f"fuel={fuel_chem} wt={fuel_chem_mass_perc} t,K={data['propellants']['fuel_initial_temp']:.3f}\n")
+                f"fuel={fuel_chem} wt={fuel_chem_mass_perc:.3f} t,K={inp.fuel_initial_temp:.3f}\n")
         f.write(
-            f"ox={data['propellants']['ox_chem']} wt 100 t,K {data['propellants']['ox_initial_temp']:.3f}\n")
+            f"ox={inp.ox_chem} wt 100 t,K {inp.ox_initial_temp:.3f}\n")
 
         f.write('end')  # last thing in the file. required!
-    return os.path.abspath(path)
 
 
 def run_executable() -> str:
@@ -60,44 +70,56 @@ def run_executable() -> str:
     # namely, the name of the input file, without the .inp ext.
 
     # this method will make the program crash if there are any issues running the command line
-    subprocess.run([CEA_EXE], input=f'{CEA_FILENAME}\n',
-                   encoding='ascii', cwd=os.path.join(PATH, CEA_PATH), check=True, shell=True, stdout=subprocess.DEVNULL)
-    return os.path.join(PATH, CEA_PATH, CEA_FILENAME+'.out')
+    subprocess.run([CEA_EXE], input=f'ceadata\n', cwd=CEA_PATH,
+                   check=True, shell=True,  stdout=subprocess.DEVNULL,
+                   encoding='ascii')
 
 
-def parse_out_file(data: dict) -> dict:
+@dataclass
+class CEAOutputData:
+    chamber_temp: float = 0
+    exhaust_gamma: float = 0
+    exhaust_molar_mass: float = 0
+    cstar: float = 0
+    exhaust_velocity: float = 0
+    isp: float = 0
+
+
+def parse_out_file() -> CEAOutputData:
     '''parses the ceadata.out file. returns a dictionary of design parameters that resulted from running CEA'''
-    with open(os.path.join(PATH, CEA_PATH, CEA_FILENAME+'.out'), 'r') as f:
-        relevant_flag = False
+    r = CEAOutputData()
+    with open(CEA_OUT, 'r') as f:
+        relevant_flag = False  # True when we're in the section of the outfile with numbers
         for line in f.readlines():
             if relevant_flag:
                 if 'T, K' in line:
-                    data['engine']['chamber_temp'] = float(
+                    r.chamber_temp = float(
                         line.split()[2])  # [K]
                 elif 'GAMMAs' in line:
-                    data['engine']['exhaust_gamma'] = float(
+                    r.exhaust_gamma = float(
                         line.split()[3])  # [~] #index 3: exit
                 elif 'M, (1/n)' in line:
-                    data['engine']['exhaust_molar_mass'] = float(
+                    r.exhaust_molar_mass = float(
                         line.split()[4])  # [g/mol] #index 4: exit
                 elif 'CSTAR, M/SEC' in line:
-                    data['propellants']['cea_cstar'] = float(
+                    r.cstar = float(
                         line.split()[3])  # [m/s]
                 elif 'Isp, M/SEC' in line:
-                    data['engine']['cea_exhaust_velocity'] = float(
+                    r.exhaust_velocity = float(
                         line.split()[3])  # [m/s]
-                    data['engine']['cea_isp'] = data['engine']['cea_exhaust_velocity'] / 9.81
-            elif 'THEORETICAL ROCKET PERFORMANCE' in line:
+                    r.isp = r.exhaust_velocity / 9.81
+
+            if 'THEORETICAL ROCKET PERFORMANCE' in line:
                 relevant_flag = True  # start of results section of .out file
             elif 'PRODUCTS WHICH WERE CONSIDERED' in line:
                 relevant_flag = False  # end of results section
-    return data
+    return r
 
 
 def run_propellant_study(data: dict, chamber_pressures: [float], of_ratios: [float]) \
         -> [[(float, float)]]:
     '''runs CEA to calculate performance and chamber temperature over the supplied of_ratios and
-    chamber_presures. use_cea_isp False will calculate the ideal IsReturns a 2D array of (isp, chamber_temp) with pressures as rows and ratios as cols'''
+    chamber_presures. use_cea_isp False will calculate the ideal IsReturns a 2D array of(isp, chamber_temp) with pressures as rows and ratios as cols'''
     data = data.copy()  # so we don't overwrite the design parameters
     print('Starting CEA calculations')
     table = []
@@ -127,7 +149,7 @@ def run_propellant_study(data: dict, chamber_pressures: [float], of_ratios: [flo
 
 
 def plot_propellant_study(table: [[(float, float)]], pchams, ofs, show=False) -> str:
-    '''takes a 2D array of (isp, chamber_temp) with pressures as rows and ratios as cols and plots series across of ratios for each chamber pressure
+    '''takes a 2D array of(isp, chamber_temp) with pressures as rows and ratios as cols and plots series across of ratios for each chamber pressure
     returns full path to plot files'''
     print('Plotting data')
     import matplotlib.pyplot as plt

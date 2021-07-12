@@ -1,10 +1,7 @@
 from lib import cea, nozzle, injector, plumbing
-import sys
 import os
 import yaml
-import numpy as np
 import shutil
-import time
 
 
 class Struct:

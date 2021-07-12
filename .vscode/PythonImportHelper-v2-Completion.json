@@ -1,0 +1,489 @@
+[
+    {
+        "label": "subprocess",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "subprocess",
+        "description": "subprocess",
+        "detail": "subprocess",
+        "documentation": {}
+    },
+    {
+        "label": "os",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "os",
+        "description": "os",
+        "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "pathlib",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pathlib",
+        "description": "pathlib",
+        "detail": "pathlib",
+        "documentation": {}
+    },
+    {
+        "label": "numpy",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "numpy",
+        "description": "numpy",
+        "detail": "numpy",
+        "documentation": {}
+    },
+    {
+        "label": "dataclass",
+        "importPath": "dataclasses",
+        "description": "dataclasses",
+        "isExtraImport": true,
+        "detail": "dataclasses",
+        "documentation": {}
+    },
+    {
+        "label": "math",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "math",
+        "description": "math",
+        "detail": "math",
+        "documentation": {}
+    },
+    {
+        "label": "CoolProp.CoolProp",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "CoolProp.CoolProp",
+        "description": "CoolProp.CoolProp",
+        "detail": "CoolProp.CoolProp",
+        "documentation": {}
+    },
+    {
+        "label": "radius",
+        "importPath": "lib.nozzle",
+        "description": "lib.nozzle",
+        "isExtraImport": true,
+        "detail": "lib.nozzle",
+        "documentation": {}
+    },
+    {
+        "label": "*",
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "isExtraImport": true,
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "cea",
+        "importPath": "lib",
+        "description": "lib",
+        "isExtraImport": true,
+        "detail": "lib",
+        "documentation": {}
+    },
+    {
+        "label": "nozzle",
+        "importPath": "lib",
+        "description": "lib",
+        "isExtraImport": true,
+        "detail": "lib",
+        "documentation": {}
+    },
+    {
+        "label": "injector",
+        "importPath": "lib",
+        "description": "lib",
+        "isExtraImport": true,
+        "detail": "lib",
+        "documentation": {}
+    },
+    {
+        "label": "plumbing",
+        "importPath": "lib",
+        "description": "lib",
+        "isExtraImport": true,
+        "detail": "lib",
+        "documentation": {}
+    },
+    {
+        "label": "cea",
+        "importPath": "lib",
+        "description": "lib",
+        "isExtraImport": true,
+        "detail": "lib",
+        "documentation": {}
+    },
+    {
+        "label": "yaml",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "yaml",
+        "description": "yaml",
+        "detail": "yaml",
+        "documentation": {}
+    },
+    {
+        "label": "shutil",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "shutil",
+        "description": "shutil",
+        "detail": "shutil",
+        "documentation": {}
+    },
+    {
+        "label": "pickle",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "pickle",
+        "description": "pickle",
+        "detail": "pickle",
+        "documentation": {}
+    },
+    {
+        "label": "CEAInputData",
+        "kind": 6,
+        "importPath": "lib.cea",
+        "description": "lib.cea",
+        "peekOfCode": "class CEAInputData:\n    pcham = None\n    pamb = None\n    of = None\n    fuel_chems = None\n    fuel_chem_mass_percs = None\n    fuel_initial_temp = None\n    ox_chem = None\n    ox_initial_temp = None\n    equilibrium = None",
+        "detail": "lib.cea",
+        "documentation": {}
+    },
+    {
+        "label": "CEAOutputData",
+        "kind": 6,
+        "importPath": "lib.cea",
+        "description": "lib.cea",
+        "peekOfCode": "class CEAOutputData:\n    chamber_temp: float = 0\n    exhaust_gamma: float = 0\n    exhaust_molar_mass: float = 0\n    cstar: float = 0\n    exhaust_velocity: float = 0\n    isp: float = 0\ndef parse_out_file() -> CEAOutputData:\n    '''parses the ceadata.out file. returns a dictionary of design parameters that resulted from running CEA'''\n    r = CEAOutputData()",
+        "detail": "lib.cea",
+        "documentation": {}
+    },
+    {
+        "label": "create_inp_file",
+        "kind": 2,
+        "importPath": "lib.cea",
+        "description": "lib.cea",
+        "peekOfCode": "def create_inp_file(inp: CEAInputData):\n    '''creates a .inp file for CEA based on the design parameters in data.'''\n    with open(CEA_INP, mode='w') as f:\n        f.write('problem\\n')\n        f.write('rocket\\n')\n        eqbr_arg = 'equilibrium' if inp.equilibrium else 'frozen nfz=1'\n        # equilibrium assumes rxns stay at equilibrium (inf. rxn rates) throughout nozzle flow\n        # allowing rxns to absorb energy from flow. slightly underestimates engine performance\n        # frozen nfz=1 assumes all equilbria fix at the nozzle throat. overestimates performance\n        f.write(f'{eqbr_arg}\\n')",
+        "detail": "lib.cea",
+        "documentation": {}
+    },
+    {
+        "label": "run_executable",
+        "kind": 2,
+        "importPath": "lib.cea",
+        "description": "lib.cea",
+        "peekOfCode": "def run_executable() -> str:\n    '''runs the FCEA2m.exe executable on ceadata.inp. returns the full path to the output file'''\n    # FCEA2m.exe is *special*\n    # it takes no cmd line arguments, but when you run it it expects you to type something in\n    # namely, the name of the input file, without the .inp ext.\n    # this method will make the program crash if there are any issues running the command line\n    subprocess.run([CEA_EXE], input=f'ceadata\\n', cwd=CEA_PATH,\n                   check=True, shell=True,  stdout=subprocess.DEVNULL,\n                   encoding='ascii')\n@dataclass",
+        "detail": "lib.cea",
+        "documentation": {}
+    },
+    {
+        "label": "parse_out_file",
+        "kind": 2,
+        "importPath": "lib.cea",
+        "description": "lib.cea",
+        "peekOfCode": "def parse_out_file() -> CEAOutputData:\n    '''parses the ceadata.out file. returns a dictionary of design parameters that resulted from running CEA'''\n    r = CEAOutputData()\n    with open(CEA_OUT, 'r') as f:\n        relevant_flag = False  # True when we're in the section of the outfile with numbers\n        for line in f.readlines():\n            if relevant_flag:\n                if 'T, K' in line:\n                    r.chamber_temp = float(\n                        line.split()[2])  # [K]",
+        "detail": "lib.cea",
+        "documentation": {}
+    },
+    {
+        "label": "run_propellant_study",
+        "kind": 2,
+        "importPath": "lib.cea",
+        "description": "lib.cea",
+        "peekOfCode": "def run_propellant_study(data: dict, chamber_pressures: [float], of_ratios: [float]) \\\n        -> [[(float, float)]]:\n    '''runs CEA to calculate performance and chamber temperature over the supplied of_ratios and\n    chamber_presures. use_cea_isp False will calculate the ideal IsReturns a 2D array of(isp, chamber_temp) with pressures as rows and ratios as cols'''\n    data = data.copy()  # so we don't overwrite the design parameters\n    print('Starting CEA calculations')\n    table = []\n    n, N = 0, len(chamber_pressures) * len(of_ratios)  # progress bar\n    for pcham in chamber_pressures:\n        row = []",
+        "detail": "lib.cea",
+        "documentation": {}
+    },
+    {
+        "label": "plot_propellant_study",
+        "kind": 2,
+        "importPath": "lib.cea",
+        "description": "lib.cea",
+        "peekOfCode": "def plot_propellant_study(table: [[(float, float)]], pchams, ofs, show=False) -> str:\n    '''takes a 2D array of(isp, chamber_temp) with pressures as rows and ratios as cols and plots series across of ratios for each chamber pressure\n    returns full path to plot files'''\n    print('Plotting data')\n    import matplotlib.pyplot as plt\n    fig = plt.figure(1, figsize=(12, 5))\n    axL = fig.add_subplot(1, 2, 1)\n    axR = fig.add_subplot(1, 2, 2)\n    axL.set_xlabel('O/F ratio (kg/kg)')\n    axL.set_ylabel('Isp (m/s)')",
+        "detail": "lib.cea",
+        "documentation": {}
+    },
+    {
+        "label": "optimize_of_ratio_for_isp",
+        "kind": 2,
+        "importPath": "lib.cea",
+        "description": "lib.cea",
+        "peekOfCode": "def optimize_of_ratio_for_isp(table: [[(float, float)]], pchams: [float], ofs: [float], pcham: float) -> (float, float):\n    '''given a table from a propellant study, returns the optimal o/f ratio and the isp it gives'''\n    import scipy.interpolate\n    import scipy.optimize\n    print('Started optimizing')\n    isp_table = [[isp for isp, tcham in row] for row in table]\n    of_table, pcham_table = np.meshgrid(ofs, pchams)\n    interpolate_isp = scipy.interpolate.interp2d(\n        of_table, pcham_table, isp_table, bounds_error=True)\n    optimal_of = scipy.optimize.fmin(lambda of: -interpolate_isp(of,",
+        "detail": "lib.cea",
+        "documentation": {}
+    },
+    {
+        "label": "CEA_PATH",
+        "kind": 5,
+        "importPath": "lib.cea",
+        "description": "lib.cea",
+        "peekOfCode": "CEA_PATH = pathlib.Path(__file__).parent / 'CEA'\nCEA_EXE = CEA_PATH / 'FCEA2m.exe'\nCEA_INP = CEA_PATH / 'ceadata.inp'\nCEA_OUT = CEA_PATH / 'ceadata.out'\n@dataclass\nclass CEAInputData:\n    pcham = None\n    pamb = None\n    of = None\n    fuel_chems = None",
+        "detail": "lib.cea",
+        "documentation": {}
+    },
+    {
+        "label": "CEA_EXE",
+        "kind": 5,
+        "importPath": "lib.cea",
+        "description": "lib.cea",
+        "peekOfCode": "CEA_EXE = CEA_PATH / 'FCEA2m.exe'\nCEA_INP = CEA_PATH / 'ceadata.inp'\nCEA_OUT = CEA_PATH / 'ceadata.out'\n@dataclass\nclass CEAInputData:\n    pcham = None\n    pamb = None\n    of = None\n    fuel_chems = None\n    fuel_chem_mass_percs = None",
+        "detail": "lib.cea",
+        "documentation": {}
+    },
+    {
+        "label": "CEA_INP",
+        "kind": 5,
+        "importPath": "lib.cea",
+        "description": "lib.cea",
+        "peekOfCode": "CEA_INP = CEA_PATH / 'ceadata.inp'\nCEA_OUT = CEA_PATH / 'ceadata.out'\n@dataclass\nclass CEAInputData:\n    pcham = None\n    pamb = None\n    of = None\n    fuel_chems = None\n    fuel_chem_mass_percs = None\n    fuel_initial_temp = None",
+        "detail": "lib.cea",
+        "documentation": {}
+    },
+    {
+        "label": "CEA_OUT",
+        "kind": 5,
+        "importPath": "lib.cea",
+        "description": "lib.cea",
+        "peekOfCode": "CEA_OUT = CEA_PATH / 'ceadata.out'\n@dataclass\nclass CEAInputData:\n    pcham = None\n    pamb = None\n    of = None\n    fuel_chems = None\n    fuel_chem_mass_percs = None\n    fuel_initial_temp = None\n    ox_chem = None",
+        "detail": "lib.cea",
+        "documentation": {}
+    },
+    {
+        "label": "R_u",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "R_u = 8314.5  # [J/(K-mol)]\ng0 = 9.81  # [m/s^2]",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "g0",
+        "kind": 5,
+        "importPath": "lib.constants",
+        "description": "lib.constants",
+        "peekOfCode": "g0 = 9.81  # [m/s^2]",
+        "detail": "lib.constants",
+        "documentation": {}
+    },
+    {
+        "label": "injector_area",
+        "kind": 2,
+        "importPath": "lib.injector",
+        "description": "lib.injector",
+        "peekOfCode": "def injector_area(mdot, Cd, rho, delta_P):\n    '''returns total area of injector required to achieve a given mass flow rate,\n    given Cd for injector, density of fuel, and pressure drop across injector.\n    assumes incompressible fluid flow through a hydraulic orifice (perhaps unreasonable for our oxidiser, GOX...)'''\n    return mdot / Cd / math.sqrt(2 * rho * delta_P * 1e5)\ndef calculate(data: dict):\n    # fuel injector\n    # fuel volume flow rate, used to pick a spray nozzle part\n    data['injector']['fuel_volume_flow'] = data['engine']['fuel_mass_flow'] / \\\n        data['propellants']['fuel_density']",
+        "detail": "lib.injector",
+        "documentation": {}
+    },
+    {
+        "label": "calculate",
+        "kind": 2,
+        "importPath": "lib.injector",
+        "description": "lib.injector",
+        "peekOfCode": "def calculate(data: dict):\n    # fuel injector\n    # fuel volume flow rate, used to pick a spray nozzle part\n    data['injector']['fuel_volume_flow'] = data['engine']['fuel_mass_flow'] / \\\n        data['propellants']['fuel_density']\n    # oxidiser injector\n    # lookup oxidiser density at injector inlet using CoolProp\n    ox_density = cp.PropsSI('D', 'T', data['propellants']['ox_initial_temp'],\n                            'P', (data['engine']['chamber_pressure'] +\n                                  data['injector']['ox_pressure_drop'])*1e5,",
+        "detail": "lib.injector",
+        "documentation": {}
+    },
+    {
+        "label": "exhaust_velocity",
+        "kind": 2,
+        "importPath": "lib.nozzle",
+        "description": "lib.nozzle",
+        "peekOfCode": "def exhaust_velocity(exhaust_gamma, exhaust_molar_mass, chamber_temp, chamber_pressure, ambient_pressure):\n    '''returns exhaust velocity, assuming isentropic expansion of gases to ambient pressure at exit'''\n    k = exhaust_gamma\n    R = R_u / exhaust_molar_mass\n    PR = ambient_pressure / chamber_pressure\n    exhaust_velocity = math.sqrt((2*k)/(k-1) * R * chamber_temp *\n                                 (1 - PR ** ((k - 1) / k)))\n    return exhaust_velocity\ndef expansion_ratio(exhaust_gamma, chamber_pressure, ambient_pressure):\n    '''returns optimum expansion ratio, assuming isentropic expansion of gases to ambient pressure at exit'''",
+        "detail": "lib.nozzle",
+        "documentation": {}
+    },
+    {
+        "label": "expansion_ratio",
+        "kind": 2,
+        "importPath": "lib.nozzle",
+        "description": "lib.nozzle",
+        "peekOfCode": "def expansion_ratio(exhaust_gamma, chamber_pressure, ambient_pressure):\n    '''returns optimum expansion ratio, assuming isentropic expansion of gases to ambient pressure at exit'''\n    k = exhaust_gamma\n    PR = ambient_pressure / chamber_pressure\n    expansion_ratio = 1 / ((((k+1)/2)**(1/(k-1))) * (PR**(1/k))\n                           * math.sqrt((k + 1) / (k-1) * (1 - PR ** ((k - 1) / k))))\n    return expansion_ratio\ndef throat_area(exhaust_gamma, exhaust_molar_mass, mass_flow, chamber_temp, chamber_pressure):\n    '''returns throat area required for choked flow to occur'''\n    k = exhaust_gamma",
+        "detail": "lib.nozzle",
+        "documentation": {}
+    },
+    {
+        "label": "throat_area",
+        "kind": 2,
+        "importPath": "lib.nozzle",
+        "description": "lib.nozzle",
+        "peekOfCode": "def throat_area(exhaust_gamma, exhaust_molar_mass, mass_flow, chamber_temp, chamber_pressure):\n    '''returns throat area required for choked flow to occur'''\n    k = exhaust_gamma\n    R = R_u / exhaust_molar_mass\n    throat_area = mass_flow / \\\n        (chamber_pressure*1e5 * k / math.sqrt(k*R*chamber_temp)\n         * (2 / (k + 1)) ** ((k + 1) / 2 / (k - 1)))\n    return throat_area\ndef radius(area):\n    '''radius corresponding to a given circular cross-sectional area'''",
+        "detail": "lib.nozzle",
+        "documentation": {}
+    },
+    {
+        "label": "radius",
+        "kind": 2,
+        "importPath": "lib.nozzle",
+        "description": "lib.nozzle",
+        "peekOfCode": "def radius(area):\n    '''radius corresponding to a given circular cross-sectional area'''\n    return math.sqrt(area / math.pi)\ndef cone_length(r1, r2, theta):\n    '''length of cone with top and bottom radii r1, r2 and half-angle theta'''\n    return abs(r2-r1) / math.tan(math.radians(theta))\ndef chamber_length(Vch, Lcon, Ach, At):\n    '''length of cylindrical part of chamber, given total chamber volume (cylinder + conical converging section), \n    length of converging section, areas of chamber and throat'''\n    Vcon = Ach * Lcon * (1 + math.sqrt(At / Ach) + At / Ach)",
+        "detail": "lib.nozzle",
+        "documentation": {}
+    },
+    {
+        "label": "cone_length",
+        "kind": 2,
+        "importPath": "lib.nozzle",
+        "description": "lib.nozzle",
+        "peekOfCode": "def cone_length(r1, r2, theta):\n    '''length of cone with top and bottom radii r1, r2 and half-angle theta'''\n    return abs(r2-r1) / math.tan(math.radians(theta))\ndef chamber_length(Vch, Lcon, Ach, At):\n    '''length of cylindrical part of chamber, given total chamber volume (cylinder + conical converging section), \n    length of converging section, areas of chamber and throat'''\n    Vcon = Ach * Lcon * (1 + math.sqrt(At / Ach) + At / Ach)\n    return (Vch - Vcon) / Ach\ndef calculate(data: dict):\n    '''takes a dictionary of design data containing original config plus data from CEA as input.",
+        "detail": "lib.nozzle",
+        "documentation": {}
+    },
+    {
+        "label": "chamber_length",
+        "kind": 2,
+        "importPath": "lib.nozzle",
+        "description": "lib.nozzle",
+        "peekOfCode": "def chamber_length(Vch, Lcon, Ach, At):\n    '''length of cylindrical part of chamber, given total chamber volume (cylinder + conical converging section), \n    length of converging section, areas of chamber and throat'''\n    Vcon = Ach * Lcon * (1 + math.sqrt(At / Ach) + At / Ach)\n    return (Vch - Vcon) / Ach\ndef calculate(data: dict):\n    '''takes a dictionary of design data containing original config plus data from CEA as input.\n    Calculates nozzle dimensions and performance, then adds those parameters to the dictionary'''\n    data_engine = data['engine']\n    data_propellants = data['propellants']",
+        "detail": "lib.nozzle",
+        "documentation": {}
+    },
+    {
+        "label": "calculate",
+        "kind": 2,
+        "importPath": "lib.nozzle",
+        "description": "lib.nozzle",
+        "peekOfCode": "def calculate(data: dict):\n    '''takes a dictionary of design data containing original config plus data from CEA as input.\n    Calculates nozzle dimensions and performance, then adds those parameters to the dictionary'''\n    data_engine = data['engine']\n    data_propellants = data['propellants']\n    data_dimensions = data['dimensions']\n    # performance\n    data_engine['exhaust_velocity'] = exhaust_velocity(\n        data_engine['exhaust_gamma'], data_engine['exhaust_molar_mass'], data_engine['chamber_temp'], data_engine['chamber_pressure'], data_engine['ambient_pressure'])\n    data_engine['specific_impulse'] = data_engine['exhaust_velocity'] / g0",
+        "detail": "lib.nozzle",
+        "documentation": {}
+    },
+    {
+        "label": "reynolds_number",
+        "kind": 2,
+        "importPath": "lib.plumbing",
+        "description": "lib.plumbing",
+        "peekOfCode": "def reynolds_number(mdot, diameter, viscosity):\n    '''returns Reynolds number [~] for fluid flowing in circular pipe given:\n    mdot [kg/s], diameter [m], viscosity (dynamic) [kg/m/s]'''\n    area = math.pi * diameter**2 / 4\n    return mdot * diameter / viscosity / area\ndef darcy_friction_factor(mdot, roughness, diameter, reynolds):\n    '''returns Darcy friction factor [~] for fluid flowing in circular pipe given:\n    mdot [kg/s], diameter [m], roughness [m], Reynolds number [~]\n    uses Haaland approx. of Colebrook eqn. https://en.wikipedia.org/wiki/Darcy_friction_factor_formulae'''\n    f = 1 / (-1.8*math.log10((roughness/diameter/3.7)**1.11 + 6.9/reynolds))**2",
+        "detail": "lib.plumbing",
+        "documentation": {}
+    },
+    {
+        "label": "darcy_friction_factor",
+        "kind": 2,
+        "importPath": "lib.plumbing",
+        "description": "lib.plumbing",
+        "peekOfCode": "def darcy_friction_factor(mdot, roughness, diameter, reynolds):\n    '''returns Darcy friction factor [~] for fluid flowing in circular pipe given:\n    mdot [kg/s], diameter [m], roughness [m], Reynolds number [~]\n    uses Haaland approx. of Colebrook eqn. https://en.wikipedia.org/wiki/Darcy_friction_factor_formulae'''\n    f = 1 / (-1.8*math.log10((roughness/diameter/3.7)**1.11 + 6.9/reynolds))**2\n    return f\ndef pressure_drop(length, mdot, diameter, roughness, rho, viscosity):\n    '''returns pressure drop [bar] as fluid flows through circular tubing, given:\n    length [m] of tubing\n    mdot [kg/s]",
+        "detail": "lib.plumbing",
+        "documentation": {}
+    },
+    {
+        "label": "pressure_drop",
+        "kind": 2,
+        "importPath": "lib.plumbing",
+        "description": "lib.plumbing",
+        "peekOfCode": "def pressure_drop(length, mdot, diameter, roughness, rho, viscosity):\n    '''returns pressure drop [bar] as fluid flows through circular tubing, given:\n    length [m] of tubing\n    mdot [kg/s]\n    diameter [m]\n    roughness [m]\n    rho [kg/m3]\n    viscosity [Pa-s]\n    uses Darcy equation to figure pressure drop per unit length.\n    https://en.wikipedia.org/wiki/Darcy%E2%80%93Weisbach_equation'''",
+        "detail": "lib.plumbing",
+        "documentation": {}
+    },
+    {
+        "label": "velocity",
+        "kind": 2,
+        "importPath": "lib.plumbing",
+        "description": "lib.plumbing",
+        "peekOfCode": "def velocity(mdot, diameter, rho):\n    '''returns velocity of flow in circular pipe [m/s] given:\n    mdot [kg/s]\n    diameter [m]\n    rho [kg/m3]'''\n    Vdot = mdot / rho\n    area = math.pi * diameter ** 2 / 4\n    vel = Vdot / area\n    return vel\ndef valve_flow_coefficient(Vdot, P_in, P_out, T, molar_mass):",
+        "detail": "lib.plumbing",
+        "documentation": {}
+    },
+    {
+        "label": "valve_flow_coefficient",
+        "kind": 2,
+        "importPath": "lib.plumbing",
+        "description": "lib.plumbing",
+        "peekOfCode": "def valve_flow_coefficient(Vdot, P_in, P_out, T, molar_mass):\n    '''returns min. Cv for a valve\n    based on http://www.idealvalve.com/pdf/Flow-Calculation-for-Gases.pdf'''\n    # the \"specific gravity\" they ask for is really just the ratio of molar masses\n    specific_gravity = molar_mass / cp.PropsSI('M', 'air')\n    Vdot_cfh = Vdot * 127133\n    T_Rankine = T * 1.8\n    P_out_psi = P_out * 14.504\n    # standard cfh is the amount of volume flow if we let the flow expand to 1atm, 70F\n    Vdot_standard_cfh = Vdot_cfh * P_out / 1.013 * 295 / T",
+        "detail": "lib.plumbing",
+        "documentation": {}
+    },
+    {
+        "label": "calculate",
+        "kind": 2,
+        "importPath": "lib.plumbing",
+        "description": "lib.plumbing",
+        "peekOfCode": "def calculate(data: dict):\n    # find pressure drop in fuel lines\n    fuel_rho = data['propellants']['fuel_density']\n    fuel_visc = data['propellants']['fuel_viscosity']\n    roughness = data['plumbing']['roughness']\n    dp_fuel = pressure_drop(data['plumbing']['fuel_length'], data['engine']['fuel_mass_flow'],\n                            data['plumbing']['fuel_diam']*2.54e-2, roughness, fuel_rho, fuel_visc)\n    data['plumbing']['fuel_pressure_drop'] = dp_fuel\n    data['plumbing']['fuel_flow_vel'] = velocity(\n        data['engine']['fuel_mass_flow'], data['plumbing']['fuel_diam']*2.54e-2, fuel_rho)",
+        "detail": "lib.plumbing",
+        "documentation": {}
+    },
+    {
+        "label": "Dog",
+        "kind": 6,
+        "importPath": "lib.test",
+        "description": "lib.test",
+        "peekOfCode": "class Dog:\n    def __init__(self, cuteness):\n        self.cuteness = cuteness\nx = Dog(3.0)\nprint('done')",
+        "detail": "lib.test",
+        "documentation": {}
+    },
+    {
+        "label": "x",
+        "kind": 5,
+        "importPath": "lib.test",
+        "description": "lib.test",
+        "peekOfCode": "x = Dog(3.0)\nprint('done')",
+        "detail": "lib.test",
+        "documentation": {}
+    },
+    {
+        "label": "Struct",
+        "kind": 6,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "class Struct:\n    def __init__(self, **entries):\n        self.__dict__.update(entries)\ndef main():\n    print('Propulsion Design Script')\n    # ask the user to enter a name for the current case\n    casename = ''  # input('Case name (enter for default): ').strip()\n    if casename == '':\n        casename = 'default'\n    # filepaths nonsense",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "main",
+        "description": "main",
+        "peekOfCode": "def main():\n    print('Propulsion Design Script')\n    # ask the user to enter a name for the current case\n    casename = ''  # input('Case name (enter for default): ').strip()\n    if casename == '':\n        casename = 'default'\n    # filepaths nonsense\n    DATAPATH = './data'\n    INFILE, OUTFILE = os.path.join(DATAPATH, 'input.yaml'), os.path.join(\n        DATAPATH, f'output_{casename}.yaml')",
+        "detail": "main",
+        "documentation": {}
+    },
+    {
+        "label": "data",
+        "kind": 5,
+        "importPath": "propellant_study",
+        "description": "propellant_study",
+        "peekOfCode": "data = yaml.safe_load(open('./data/design_data.yaml', 'r'))\npchams = range(15, 40, 5)\nofs = np.linspace(1.8, 2.8, num=20)\nresults = cea.run_propellant_study(data, pchams, ofs)\n# pickle.dump(results, open('results.pickle', 'wb'))\nprint('Plot saved to:', cea.plot_propellant_study(results, pchams, ofs))\npcham_desired = 30\noptimal_of, optimal_isp = cea.optimize_of_ratio_for_isp(\n    results, pchams, ofs, pcham_desired)\nprint(",
+        "detail": "propellant_study",
+        "documentation": {}
+    },
+    {
+        "label": "pchams",
+        "kind": 5,
+        "importPath": "propellant_study",
+        "description": "propellant_study",
+        "peekOfCode": "pchams = range(15, 40, 5)\nofs = np.linspace(1.8, 2.8, num=20)\nresults = cea.run_propellant_study(data, pchams, ofs)\n# pickle.dump(results, open('results.pickle', 'wb'))\nprint('Plot saved to:', cea.plot_propellant_study(results, pchams, ofs))\npcham_desired = 30\noptimal_of, optimal_isp = cea.optimize_of_ratio_for_isp(\n    results, pchams, ofs, pcham_desired)\nprint(\n    f'For Pcham={pcham_desired} bar, maximum Isp of {optimal_isp:.3f} m/s occurs at O/F mass ratio {optimal_of:.3f}')",
+        "detail": "propellant_study",
+        "documentation": {}
+    },
+    {
+        "label": "ofs",
+        "kind": 5,
+        "importPath": "propellant_study",
+        "description": "propellant_study",
+        "peekOfCode": "ofs = np.linspace(1.8, 2.8, num=20)\nresults = cea.run_propellant_study(data, pchams, ofs)\n# pickle.dump(results, open('results.pickle', 'wb'))\nprint('Plot saved to:', cea.plot_propellant_study(results, pchams, ofs))\npcham_desired = 30\noptimal_of, optimal_isp = cea.optimize_of_ratio_for_isp(\n    results, pchams, ofs, pcham_desired)\nprint(\n    f'For Pcham={pcham_desired} bar, maximum Isp of {optimal_isp:.3f} m/s occurs at O/F mass ratio {optimal_of:.3f}')",
+        "detail": "propellant_study",
+        "documentation": {}
+    },
+    {
+        "label": "results",
+        "kind": 5,
+        "importPath": "propellant_study",
+        "description": "propellant_study",
+        "peekOfCode": "results = cea.run_propellant_study(data, pchams, ofs)\n# pickle.dump(results, open('results.pickle', 'wb'))\nprint('Plot saved to:', cea.plot_propellant_study(results, pchams, ofs))\npcham_desired = 30\noptimal_of, optimal_isp = cea.optimize_of_ratio_for_isp(\n    results, pchams, ofs, pcham_desired)\nprint(\n    f'For Pcham={pcham_desired} bar, maximum Isp of {optimal_isp:.3f} m/s occurs at O/F mass ratio {optimal_of:.3f}')",
+        "detail": "propellant_study",
+        "documentation": {}
+    },
+    {
+        "label": "pcham_desired",
+        "kind": 5,
+        "importPath": "propellant_study",
+        "description": "propellant_study",
+        "peekOfCode": "pcham_desired = 30\noptimal_of, optimal_isp = cea.optimize_of_ratio_for_isp(\n    results, pchams, ofs, pcham_desired)\nprint(\n    f'For Pcham={pcham_desired} bar, maximum Isp of {optimal_isp:.3f} m/s occurs at O/F mass ratio {optimal_of:.3f}')",
+        "detail": "propellant_study",
+        "documentation": {}
+    }
+]
