@@ -1,5 +1,5 @@
 import math
-import CoolProp.CoolProp as cp
+#import CoolProp.CoolProp as cp
 from lib.nozzle import radius
 
 

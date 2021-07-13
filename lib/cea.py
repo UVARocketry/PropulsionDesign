@@ -82,7 +82,6 @@ class CEAOutputData:
     exhaust_molar_mass: float = 0
     cstar: float = 0
     exhaust_velocity: float = 0
-    isp: float = 0
 
 
 def parse_out_file() -> CEAOutputData:
@@ -100,14 +99,13 @@ def parse_out_file() -> CEAOutputData:
                         line.split()[3])  # [~] #index 3: exit
                 elif 'M, (1/n)' in line:
                     r.exhaust_molar_mass = float(
-                        line.split()[4])  # [g/mol] #index 4: exit
+                        line.split()[4])  # [kg/kmol] #index 4: exit
                 elif 'CSTAR, M/SEC' in line:
                     r.cstar = float(
                         line.split()[3])  # [m/s]
                 elif 'Isp, M/SEC' in line:
                     r.exhaust_velocity = float(
                         line.split()[3])  # [m/s]
-                    r.isp = r.exhaust_velocity / 9.81
 
             if 'THEORETICAL ROCKET PERFORMANCE' in line:
                 relevant_flag = True  # start of results section of .out file
@@ -116,76 +114,76 @@ def parse_out_file() -> CEAOutputData:
     return r
 
 
-def run_propellant_study(data: dict, chamber_pressures: [float], of_ratios: [float]) \
-        -> [[(float, float)]]:
-    '''runs CEA to calculate performance and chamber temperature over the supplied of_ratios and
-    chamber_presures. use_cea_isp False will calculate the ideal IsReturns a 2D array of(isp, chamber_temp) with pressures as rows and ratios as cols'''
-    data = data.copy()  # so we don't overwrite the design parameters
-    print('Starting CEA calculations')
-    table = []
-    n, N = 0, len(chamber_pressures) * len(of_ratios)  # progress bar
-    for pcham in chamber_pressures:
-        row = []
-        for of_ratio in of_ratios:
-            data['engine']['chamber_pressure'] = pcham
-            data['propellants']['of_ratio'] = of_ratio
+# def run_propellant_study(data: dict, chamber_pressures: [float], of_ratios: [float]) \
+#         -> [[(float, float)]]:
+#     '''runs CEA to calculate performance and chamber temperature over the supplied of_ratios and
+#     chamber_presures. use_cea_isp False will calculate the ideal IsReturns a 2D array of(isp, chamber_temp) with pressures as rows and ratios as cols'''
+#     data = data.copy()  # so we don't overwrite the design parameters
+#     print('Starting CEA calculations')
+#     table = []
+#     n, N = 0, len(chamber_pressures) * len(of_ratios)  # progress bar
+#     for pcham in chamber_pressures:
+#         row = []
+#         for of_ratio in of_ratios:
+#             data['engine']['chamber_pressure'] = pcham
+#             data['propellants']['of_ratio'] = of_ratio
 
-            create_inp_file(data)
-            run_executable()
-            parse_out_file(data)
-            # cea isp max: 2.25
-            # cea cstar max: 2.05
-            # calculated cstar max: 2.15
-            isp = data['engine']['cea_exhaust_velocity']  # nozzle.c_star(
-            # output['exhaust_gamma'], output['exhaust_molar_mass'], output['chamber_temp'])
-            chamber_temp = data['engine']['chamber_temp']
+#             create_inp_file(data)
+#             run_executable()
+#             parse_out_file(data)
+#             # cea isp max: 2.25
+#             # cea cstar max: 2.05
+#             # calculated cstar max: 2.15
+#             isp = data['engine']['cea_exhaust_velocity']  # nozzle.c_star(
+#             # output['exhaust_gamma'], output['exhaust_molar_mass'], output['chamber_temp'])
+#             chamber_temp = data['engine']['chamber_temp']
 
-            row.append((isp, chamber_temp))
-            n += 1
-        table.append(row)
-        print(f'{n} of {N} CEA calculations done.')
-    print('CEA calculations done')
-    return table
-
-
-def plot_propellant_study(table: [[(float, float)]], pchams, ofs, show=False) -> str:
-    '''takes a 2D array of(isp, chamber_temp) with pressures as rows and ratios as cols and plots series across of ratios for each chamber pressure
-    returns full path to plot files'''
-    print('Plotting data')
-    import matplotlib.pyplot as plt
-    fig = plt.figure(1, figsize=(12, 5))
-    axL = fig.add_subplot(1, 2, 1)
-    axR = fig.add_subplot(1, 2, 2)
-    axL.set_xlabel('O/F ratio (kg/kg)')
-    axL.set_ylabel('Isp (m/s)')
-    axR.set_xlabel('O/F ratio (kg/kg)')
-    axR.set_ylabel('Tcham (K)')
-    for i in range(len(pchams)):
-        row = table[i]
-        c_stars, temps = zip(*row)
-        a = i/len(table)
-        linecolor = (a, 1 - a, 0)
-        axL.plot(ofs, c_stars, color=linecolor)
-        axR.plot(ofs, temps, color=linecolor, label=f'{pchams[i]:.1f}')
-    axR.legend(title='Pcham (bar)')
-    fig.tight_layout()  # stops margin overlap
-    filename = 'propellant_study_plot'
-    plt.savefig(fname=filename, bbox_inches='tight')
-    if show:
-        plt.show()
-    return os.path.join(PATH, filename+'.png')
+#             row.append((isp, chamber_temp))
+#             n += 1
+#         table.append(row)
+#         print(f'{n} of {N} CEA calculations done.')
+#     print('CEA calculations done')
+#     return table
 
 
-def optimize_of_ratio_for_isp(table: [[(float, float)]], pchams: [float], ofs: [float], pcham: float) -> (float, float):
-    '''given a table from a propellant study, returns the optimal o/f ratio and the isp it gives'''
-    import scipy.interpolate
-    import scipy.optimize
-    print('Started optimizing')
-    isp_table = [[isp for isp, tcham in row] for row in table]
-    of_table, pcham_table = np.meshgrid(ofs, pchams)
-    interpolate_isp = scipy.interpolate.interp2d(
-        of_table, pcham_table, isp_table, bounds_error=True)
-    optimal_of = scipy.optimize.fmin(lambda of: -interpolate_isp(of,
-                                                                 pcham), (min(ofs) + max(ofs)) / 2)
-    print('Done optimizing')
-    return optimal_of[0], (interpolate_isp(optimal_of, pcham))[0]
+# def plot_propellant_study(table: [[(float, float)]], pchams, ofs, show=False) -> str:
+#     '''takes a 2D array of(isp, chamber_temp) with pressures as rows and ratios as cols and plots series across of ratios for each chamber pressure
+#     returns full path to plot files'''
+#     print('Plotting data')
+#     import matplotlib.pyplot as plt
+#     fig = plt.figure(1, figsize=(12, 5))
+#     axL = fig.add_subplot(1, 2, 1)
+#     axR = fig.add_subplot(1, 2, 2)
+#     axL.set_xlabel('O/F ratio (kg/kg)')
+#     axL.set_ylabel('Isp (m/s)')
+#     axR.set_xlabel('O/F ratio (kg/kg)')
+#     axR.set_ylabel('Tcham (K)')
+#     for i in range(len(pchams)):
+#         row = table[i]
+#         c_stars, temps = zip(*row)
+#         a = i/len(table)
+#         linecolor = (a, 1 - a, 0)
+#         axL.plot(ofs, c_stars, color=linecolor)
+#         axR.plot(ofs, temps, color=linecolor, label=f'{pchams[i]:.1f}')
+#     axR.legend(title='Pcham (bar)')
+#     fig.tight_layout()  # stops margin overlap
+#     filename = 'propellant_study_plot'
+#     plt.savefig(fname=filename, bbox_inches='tight')
+#     if show:
+#         plt.show()
+#     return os.path.join(PATH, filename+'.png')
+
+
+# def optimize_of_ratio_for_isp(table: [[(float, float)]], pchams: [float], ofs: [float], pcham: float) -> (float, float):
+#     '''given a table from a propellant study, returns the optimal o/f ratio and the isp it gives'''
+#     import scipy.interpolate
+#     import scipy.optimize
+#     print('Started optimizing')
+#     isp_table = [[isp for isp, tcham in row] for row in table]
+#     of_table, pcham_table = np.meshgrid(ofs, pchams)
+#     interpolate_isp = scipy.interpolate.interp2d(
+#         of_table, pcham_table, isp_table, bounds_error=True)
+#     optimal_of = scipy.optimize.fmin(lambda of: -interpolate_isp(of,
+#                                                                  pcham), (min(ofs) + max(ofs)) / 2)
+#     print('Done optimizing')
+#     return optimal_of[0], (interpolate_isp(optimal_of, pcham))[0]
