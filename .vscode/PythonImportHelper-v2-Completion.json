@@ -69,62 +69,12 @@
         "documentation": {}
     },
     {
-        "label": "cea",
-        "importPath": "lib",
-        "description": "lib",
-        "isExtraImport": true,
-        "detail": "lib",
-        "documentation": {}
-    },
-    {
-        "label": "nozzle",
-        "importPath": "lib",
-        "description": "lib",
-        "isExtraImport": true,
-        "detail": "lib",
-        "documentation": {}
-    },
-    {
-        "label": "injector",
-        "importPath": "lib",
-        "description": "lib",
-        "isExtraImport": true,
-        "detail": "lib",
-        "documentation": {}
-    },
-    {
-        "label": "plumbing",
-        "importPath": "lib",
-        "description": "lib",
-        "isExtraImport": true,
-        "detail": "lib",
-        "documentation": {}
-    },
-    {
         "label": "CoolProp.CoolProp",
         "kind": 6,
         "isExtraImport": true,
         "importPath": "CoolProp.CoolProp",
         "description": "CoolProp.CoolProp",
         "detail": "CoolProp.CoolProp",
-        "documentation": {}
-    },
-    {
-        "label": "yaml",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "yaml",
-        "description": "yaml",
-        "detail": "yaml",
-        "documentation": {}
-    },
-    {
-        "label": "shutil",
-        "kind": 6,
-        "isExtraImport": true,
-        "importPath": "shutil",
-        "description": "shutil",
-        "detail": "shutil",
         "documentation": {}
     },
     {
@@ -368,24 +318,6 @@
         "description": "lib.test",
         "peekOfCode": "x = Dog(3.0)\nprint('done')",
         "detail": "lib.test",
-        "documentation": {}
-    },
-    {
-        "label": "Struct",
-        "kind": 6,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "class Struct:\n    def __init__(self, **entries):\n        self.__dict__.update(entries)\ndef main():\n    print('Propulsion Design Script')\n    # ask the user to enter a name for the current case\n    casename = ''  # input('Case name (enter for default): ').strip()\n    if casename == '':\n        casename = 'default'\n    # filepaths nonsense",
-        "detail": "main",
-        "documentation": {}
-    },
-    {
-        "label": "main",
-        "kind": 2,
-        "importPath": "main",
-        "description": "main",
-        "peekOfCode": "def main():\n    print('Propulsion Design Script')\n    # ask the user to enter a name for the current case\n    casename = ''  # input('Case name (enter for default): ').strip()\n    if casename == '':\n        casename = 'default'\n    # filepaths nonsense\n    DATAPATH = './data'\n    INFILE, OUTFILE = os.path.join(DATAPATH, 'input.yaml'), os.path.join(\n        DATAPATH, f'output_{casename}.yaml')",
-        "detail": "main",
         "documentation": {}
     }
 ]
