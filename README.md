@@ -1,4 +1,4 @@
 # PropulsionDesign
 
-Propulsion design scripts in Python for UVA's first liquid-fueled rocket engine.
-Enter parameters in input.yaml, run main.py, and check output_default.yaml for results.
+Propulsion design code for UVA's first liquid-fueled rocket engine. Written in Python using Jupyter Notebooks.
+The original software (mangled version in /old code) used .yaml input and output files and a main.py processor program to do the same math.
