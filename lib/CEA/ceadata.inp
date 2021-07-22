@@ -3,7 +3,7 @@ rocket
 equilibrium
 p,bar=30.000
 pip=29.615
-o/f=None
+o/f=1.85
 react
 fuel=JP-5 wt=100.000 t,K=298.000
 ox=O2 wt 100 t,K 298.000
