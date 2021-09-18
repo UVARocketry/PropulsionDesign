@@ -31,7 +31,7 @@ fuel=JP-5 wt=100.000 t,K=298.000 //burn 100% by mass JP-5 initially at 298K
 ox=O2 wt 100 t,K 298.000 //with 100% by mass gaseous O2 ditto
 end
 ```
-To use a mixture of fuels do
+To use a mixture of fuels (wt are MASS fractions) do
 ```
 fuel=FORMULA_1 wt=75 t,K=298
 fuel=FORMULA_2 wt=10 t,K=298
