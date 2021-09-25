@@ -4,11 +4,13 @@
 #         ((exhaust_gamma + 1) / 2) ** ((exhaust_gamma + 1) / (2 * (exhaust_gamma - 1)))
 #     return c_star
 
+import numpy as np
+
 
 def exhaust_velocity(exhaust_gamma, exhaust_molar_mass, chamber_temp, chamber_pressure, ambient_pressure):
     '''returns exhaust velocity, assuming isentropic expansion of gases to ambient pressure at exit'''
     k = exhaust_gamma
-    R = constants.R * 1e3 / exhaust_molar_mass
+    R = 8.3144e3 / exhaust_molar_mass
     PR = ambient_pressure / chamber_pressure
     exhaust_velocity = np.sqrt((2*k)/(k-1) * R * chamber_temp *
                                (1 - PR ** ((k - 1) / k)))
@@ -27,9 +29,9 @@ def expansion_ratio(exhaust_gamma, chamber_pressure, ambient_pressure):
 def throat_area(exhaust_gamma, exhaust_molar_mass, mass_flow, chamber_temp, chamber_pressure):
     '''returns throat area required for choked flow to occur'''
     k = exhaust_gamma
-    R = constants.R * 1e3 / exhaust_molar_mass
+    R = 8.3144e3 / exhaust_molar_mass
     throat_area = mass_flow / \
-        (chamber_pressure*constants.bar * k / np.sqrt(k*R*chamber_temp)
+        (chamber_pressure*1e5 * k / np.sqrt(k*R*chamber_temp)
          * (2 / (k + 1)) ** ((k + 1) / 2 / (k - 1)))
     return throat_area
 
