@@ -147,7 +147,7 @@
         "kind": 2,
         "importPath": "lib.nozzle",
         "description": "lib.nozzle",
-        "peekOfCode": "def exhaust_velocity(exhaust_gamma, exhaust_molar_mass, chamber_temp, chamber_pressure, ambient_pressure):\n    '''returns exhaust velocity, assuming isentropic expansion of gases to ambient pressure at exit'''\n    k = exhaust_gamma\n    R = 8.3144e3 / exhaust_molar_mass\n    PR = ambient_pressure / chamber_pressure\n    exhaust_velocity = np.sqrt((2*k)/(k-1) * R * chamber_temp *\n                               (1 - PR ** ((k - 1) / k)))\n    return exhaust_velocity\ndef expansion_ratio(exhaust_gamma, chamber_pressure, ambient_pressure):\n    '''returns optimum expansion ratio, assuming isentropic expansion of gases to ambient pressure at exit'''",
+        "peekOfCode": "def exhaust_velocity(exhaust_gamma, exhaust_molar_mass, chamber_temp, chamber_pressure,\n                     ambient_pressure):\n    '''returns exhaust velocity, assuming isentropic expansion of gases to ambient pressure at exit'''\n    k = exhaust_gamma\n    R = 8.314463e3 / exhaust_molar_mass\n    PR = ambient_pressure / chamber_pressure\n    exhaust_velocity = np.sqrt((2*k)/(k-1) * R * chamber_temp *\n                               (1 - PR ** ((k - 1) / k)))\n    return exhaust_velocity\ndef expansion_ratio(exhaust_gamma, chamber_pressure, ambient_pressure):",
         "detail": "lib.nozzle",
         "documentation": {}
     },

@@ -95,11 +95,13 @@ def parse_out_file() -> CEAOutputData:
                     r.chamber_temp = float(
                         line.split()[2])  # [K]
                 elif 'GAMMAs' in line:
-                    r.exhaust_gamma = float(
-                        line.split()[3])  # [~] #index 3: exit
+                    r.throat_gamma = float(
+                        line.split()[2])  # throat
+                    # line.split()[3])  # [~] #index 3: exit
                 elif 'M, (1/n)' in line:
-                    r.exhaust_molar_mass = float(
-                        line.split()[4])  # [kg/kmol] #index 4: exit
+                    r.throat_molar_mass = float(
+                        line.split()[3])  # throat
+                    # line.split()[4])  # [kg/kmol] #index 4: exit
                 elif 'CSTAR, M/SEC' in line:
                     r.cstar = float(
                         line.split()[3])  # [m/s]
