@@ -240,23 +240,5 @@
         "peekOfCode": "def calculate(data: dict):\n    # find pressure drop in fuel lines\n    fuel_rho = data['propellants']['fuel_density']\n    fuel_visc = data['propellants']['fuel_viscosity']\n    roughness = data['plumbing']['roughness']\n    dp_fuel = pressure_drop(data['plumbing']['fuel_length'], data['engine']['fuel_mass_flow'],\n                            data['plumbing']['fuel_diam']*2.54e-2, roughness, fuel_rho, fuel_visc)\n    data['plumbing']['fuel_pressure_drop'] = dp_fuel\n    data['plumbing']['fuel_flow_vel'] = velocity(\n        data['engine']['fuel_mass_flow'], data['plumbing']['fuel_diam']*2.54e-2, fuel_rho)",
         "detail": "lib.plumbing",
         "documentation": {}
-    },
-    {
-        "label": "Dog",
-        "kind": 6,
-        "importPath": "lib.test",
-        "description": "lib.test",
-        "peekOfCode": "class Dog:\n    def __init__(self, cuteness):\n        self.cuteness = cuteness\nx = Dog(3.0)\nprint('done')",
-        "detail": "lib.test",
-        "documentation": {}
-    },
-    {
-        "label": "x",
-        "kind": 5,
-        "importPath": "lib.test",
-        "description": "lib.test",
-        "peekOfCode": "x = Dog(3.0)\nprint('done')",
-        "detail": "lib.test",
-        "documentation": {}
     }
 ]
