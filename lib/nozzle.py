@@ -46,4 +46,5 @@ def chamber_length(Vch, Lcon, Ach, At):
     '''length of cylindrical part of chamber, given total chamber volume (cylinder + conical converging section), 
     length of converging section, areas of chamber and throat'''
     Vcon = Ach * Lcon * (1 + np.sqrt(At / Ach) + At / Ach)
+    print(Vch-Vcon)
     return (Vch - Vcon) / Ach
