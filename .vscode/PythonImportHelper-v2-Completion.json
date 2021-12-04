@@ -174,7 +174,7 @@
         "kind": 2,
         "importPath": "lib.nozzle",
         "description": "lib.nozzle",
-        "peekOfCode": "def cone_length(r1, r2, theta):\n    '''length of cone with top and bottom radii r1, r2 and half-angle theta'''\n    return abs(r2-r1) / np.tan(np.radians(theta))\ndef chamber_length(Vch, Lcon, Ach, At):\n    '''length of cylindrical part of chamber, given total chamber volume (cylinder + conical converging section), \n    length of converging section, areas of chamber and throat'''\n    Vcon = Ach * Lcon * (1 + np.sqrt(At / Ach) + At / Ach)\n    return (Vch - Vcon) / Ach",
+        "peekOfCode": "def cone_length(r1, r2, theta):\n    '''length of cone with top and bottom radii r1, r2 and half-angle theta'''\n    return abs(r2-r1) / np.tan(np.radians(theta))\ndef chamber_length(Vch, Lcon, Ach, At):\n    '''length of cylindrical part of chamber, given total chamber volume (cylinder + conical converging section), \n    length of converging section, areas of chamber and throat'''\n    Vcon = Ach * Lcon * (1 + np.sqrt(At / Ach) + At / Ach)\n    print(Vch-Vcon)\n    return (Vch - Vcon) / Ach",
         "detail": "lib.nozzle",
         "documentation": {}
     },
@@ -183,7 +183,7 @@
         "kind": 2,
         "importPath": "lib.nozzle",
         "description": "lib.nozzle",
-        "peekOfCode": "def chamber_length(Vch, Lcon, Ach, At):\n    '''length of cylindrical part of chamber, given total chamber volume (cylinder + conical converging section), \n    length of converging section, areas of chamber and throat'''\n    Vcon = Ach * Lcon * (1 + np.sqrt(At / Ach) + At / Ach)\n    return (Vch - Vcon) / Ach",
+        "peekOfCode": "def chamber_length(Vch, Lcon, Ach, At):\n    '''length of cylindrical part of chamber, given total chamber volume (cylinder + conical converging section), \n    length of converging section, areas of chamber and throat'''\n    Vcon = Ach * Lcon * (1 + np.sqrt(At / Ach) + At / Ach)\n    print(Vch-Vcon)\n    return (Vch - Vcon) / Ach",
         "detail": "lib.nozzle",
         "documentation": {}
     },
